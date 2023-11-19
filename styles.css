@@ -1,0 +1,30 @@
+body {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100vh;
+}
+
+#main{
+    padding: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+
+
+
+}
+
+#mainCardDiv{
+    display: flex;
+    gap: 20px;
+    text-align: center;
+}
+
+#countryel{
+    margin: 0px;
+    padding: 0;
+}

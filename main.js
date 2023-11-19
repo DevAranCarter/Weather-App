@@ -1,5 +1,6 @@
 const main = document.getElementById('main');
 
+//Creates the form to get a city
 function createForm() {
 let form = document.createElement('form');
     form.id = "locationForm";
@@ -27,23 +28,68 @@ let form = document.createElement('form');
 
 }
 
-function createWeekCard(condition, day, temp){
+//Creates a div to hold all the weather cards
+function createCardDiv(){
+    const mainCardDiv = document.createElement('div')
+    mainCardDiv.id = 'mainCardDiv';
+    main.appendChild(mainCardDiv);
+}
+
+//Creates the cards that display the weather cards below main content
+function createWeekCard(day, condition, temp){
+
     let cardDiv = document.createElement('div');
+    cardDiv.id = 'cardDiv';
     let dayOfWeek = document.createElement('h2');
     let daysCondition = document.createElement('h3');
+
     let daysTemp = document.createElement('h3');
 
     dayOfWeek.textContent = day;
     daysCondition.textContent = condition;
-    daysTemp.textContent = temp;
+    daysTemp.textContent = `${temp} °C`;
 
-    main.appendChild(cardDiv);
+    document.getElementById('mainCardDiv').appendChild(cardDiv);
     cardDiv.appendChild(dayOfWeek);
     cardDiv.appendChild(daysCondition);
+    addWeatherIcon(condition, cardDiv);
     cardDiv.appendChild(daysTemp);
 
 }
 
+//Adds a weather Icon depending on the weather of a card
+function addWeatherIcon(weather, div) {
+    if (weather.indexOf('cloudy') >= 0 || weather.indexOf('Overcast') >= 0) {
+        let icon = document.createElement('img');
+        icon.src = './icons/2682849_cloud_cloudy_day_forecast_sun_icon (2).png'
+        div.appendChild(icon);
+
+
+    }
+    else if (weather.indexOf('rain') >= 0) {
+        let icon = document.createElement('img');
+        icon.src = './icons/2682844_cloud_day_precipitation_rain_snow_icon.png'
+        div.appendChild(icon);
+        
+
+    }
+    else if (weather.indexOf('Sunny') >= 0 || weather.indexOf('Clear') >= 0) {
+        let icon = document.createElement('img');
+        icon.src = './icons/2682848_day_forecast_sun_sunny_weather_icon.png'
+        div.appendChild(icon);
+
+    }
+
+    else if (weather.indexOf('Misty') >= 0){
+        let icon = document.createElement('img');
+        icon.src = './icons/2682821_fog_foggy_forecast_mist_weather_icon.png'
+        div.appendChild(icon);
+        
+    }
+
+}
+
+//Converts the getDay function to a String literal day
 function convertNumToDay(num){
     if (num == 1){
         return 'Monday'
@@ -68,6 +114,7 @@ function convertNumToDay(num){
     }
     }
 
+// Creates the weekly weather forecast for the next 7 days and displays it
 async function createWeeklyWeatherForecast(location){
     try{
         const getWeeklyForecast = await fetch(`http://api.weatherapi.com/v1/forecast.json?key=9397db559046499aa78144721231411&q=${location}&days=8`)
@@ -83,11 +130,17 @@ async function createWeeklyWeatherForecast(location){
     }
 }
 
+//Removes the current forecast for when the weather location is changed
+function removeCurrentForecast(){
+    let remCardDiv = document.getElementById('cardDiv');
+    remCardDiv.remove();
+
+}
+
+// Creates the weather information for the day and location currently selected
 function createMainContent() {
     const countryh1 = document.createElement('h1');
     countryh1.id = 'countryh1';
-    const locNameh1 = document.createElement('h1');
-    locNameh1.id = 'locNameh1';
     const curntWeath = document.createElement('h2');
     curntWeath.id = 'curntWeathh2';
     const locTimeh2 = document.createElement('h2');
@@ -96,15 +149,15 @@ function createMainContent() {
     temp_ch3.id = 'temp_ch3';
 
     main.appendChild(countryh1);
-    main.appendChild(locNameh1);
     main.appendChild(curntWeath);
     main.appendChild(locTimeh2);
     main.appendChild(temp_ch3);
 
-    return {countryh1, locNameh1, locTimeh2, temp_ch3}
+    return {countryh1, locTimeh2, temp_ch3}
 
 }
 
+// Gets the initial weather info which is set by default to London
 async function initialWeatherInfo(){
     try{
         const getWeather = await fetch(`http://api.weatherapi.com/v1/current.json?key=9397db559046499aa78144721231411&q=london`);
@@ -130,6 +183,33 @@ async function initialWeatherInfo(){
 
 }
 
+// Checks the current weather and changes the background accordingly
+function checkAndDisplayWeatherBackground(weather){
+    if (weather.indexOf('rain') >= 0){
+        main.style.backgroundImage = 'url(./images/valentin-muller-bWtd1ZyEy6w-unsplash.jpg)';
+        main.style.color = 'white';
+
+
+    }
+    else if (weather.indexOf('cloudy') >= 0 || weather.indexOf('Overcast') >= 0){
+        main.style.backgroundImage = 'url(./images/daoudi-aissa-Pe1Ol9oLc4o-unsplash.jpg)';
+
+        main.style.color = 'white';
+
+    }
+    else if (weather.indexOf('Sunny') >= 0 || weather.indexOf('Clear') >= 0){
+        main.style.backgroundImage = 'url(./images/david-law-sd-34z9t13g-unsplash.jpg)';
+        main.style.color = 'black';
+
+    }
+    else if (weather.indexOf('Misty') >= 0){
+        main.style.backgroundImage = 'url(./images/cristofer-maximilian-YmsrXcDf0J8-unsplash.jpg)';
+        main.style.color = 'black';
+
+    }
+}
+
+// displays the main content of the current day and weather on the page
 function displayMainContent(country, locName, currentWeath, locTime, temp_c, temp_f){
 
     let countryel = document.getElementById('countryh1');
@@ -138,13 +218,15 @@ function displayMainContent(country, locName, currentWeath, locTime, temp_c, tem
     let temp_cel = document.getElementById('temp_ch3');
 
     countryel.textContent = `${locName}, ${country}`;
+    checkAndDisplayWeatherBackground(currentWeath);
     currentWeathel.textContent = currentWeath;
+    addWeatherIcon(currentWeath, currentWeathel);
     locTimeel.textContent = locTime;
     temp_cel.textContent = `${temp_c} °C`;
 
 }
     
-
+// gets the current weather
 async function getWeather(){
     try{
         const getWeather = await fetch('http://api.weatherapi.com/v1/current.json?key=9397db559046499aa78144721231411&q=london')
@@ -156,6 +238,7 @@ async function getWeather(){
     }
 }
 
+// Takes a location and then gives you information on todays weather and then the next 7 days of weather.
 async function generalWeatherInfo(location, submit) {
     try{
         const getWeather = await fetch(`http://api.weatherapi.com/v1/current.json?key=9397db559046499aa78144721231411&q=${location}`);
@@ -166,6 +249,9 @@ async function generalWeatherInfo(location, submit) {
                             weather.location.localtime,
                             weather.current.temp_c,
                             weather.current.temp_f);
+        for (i=1; i< 8; i++){
+        removeCurrentForecast();
+        }
         createWeeklyWeatherForecast(location);
 
         console.log(weather.location.country);
@@ -179,8 +265,9 @@ async function generalWeatherInfo(location, submit) {
         console.log(err);
     } 
 }
-createMainContent()
+createMainContent();
 initialWeatherInfo();
 createForm();
+createCardDiv();
 
 
