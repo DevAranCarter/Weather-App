@@ -59,7 +59,7 @@ function createWeekCard(day, condition, temp){
 
 //Adds a weather Icon depending on the weather of a card
 function addWeatherIcon(weather, div) {
-    if (weather.indexOf('cloudy') >= 0 || weather.indexOf('Overcast') >= 0) {
+    if (weather.indexOf('cloudy') >= 0 || weather.indexOf('Overcast') >= 0 || weather.indexOf('Cloudy') >= 0) {
         let icon = document.createElement('img');
         icon.src = './icons/2682849_cloud_cloudy_day_forecast_sun_icon (2).png'
         div.appendChild(icon);
@@ -143,13 +143,16 @@ function createMainContent() {
     countryh1.id = 'countryh1';
     const curntWeath = document.createElement('h2');
     curntWeath.id = 'curntWeathh2';
+    const curDay = document.createElement('h2');
+    curDay.id = 'currDay';
     const locTimeh2 = document.createElement('h2');
     locTimeh2.id = 'locTimeh2';
-    const temp_ch3 = document.createElement('h3');
+    const temp_ch3 = document.createElement('h2');
     temp_ch3.id = 'temp_ch3';
 
     main.appendChild(countryh1);
     main.appendChild(curntWeath);
+    main.appendChild(curDay);
     main.appendChild(locTimeh2);
     main.appendChild(temp_ch3);
 
@@ -170,11 +173,6 @@ async function initialWeatherInfo(){
             weather.current.temp_c,
             weather.current.temp_f);
         createWeeklyWeatherForecast('london');
-        console.log(weather.location.country);
-        console.log(weather.location.name);
-        console.log(weather.location.localtime);
-        console.log(`${weather.current.temp_c} C`);
-        console.log(`${weather.current.temp_f} F`);
 
         }
     catch(err){
@@ -215,6 +213,7 @@ function displayMainContent(country, locName, currentWeath, locTime, temp_c, tem
     let countryel = document.getElementById('countryh1');
     let locTimeel = document.getElementById('locTimeh2');
     let currentWeathel = document.getElementById('curntWeathh2');
+    let currentDay = document.getElementById('currDay');
     let temp_cel = document.getElementById('temp_ch3');
 
     countryel.textContent = `${locName}, ${country}`;
@@ -222,6 +221,10 @@ function displayMainContent(country, locName, currentWeath, locTime, temp_c, tem
     currentWeathel.textContent = currentWeath;
     addWeatherIcon(currentWeath, currentWeathel);
     locTimeel.textContent = locTime;
+    let mainCDate = new Date(locTime);
+    let convertedDay = convertNumToDay(mainCDate.getDay());
+    console.log(convertedDay); 
+    currentDay.textContent = convertedDay; 
     temp_cel.textContent = `${temp_c} °C`;
 
 }
