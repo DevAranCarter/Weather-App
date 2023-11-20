@@ -18,6 +18,28 @@ body {
 
 }
 
+#countryh1{
+    margin: 0;
+    margin-top: 10px;
+    padding: 0;
+}
+
+#curntWeathh2{
+    margin: 0;
+    padding-top: 15px;
+
+}
+
+#currDay {
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+#weathIcon{
+    margin: 0;
+    padding: 0;
+}
+
 #mainCardDiv{
     display: flex;
     gap: 20px;
@@ -27,4 +49,20 @@ body {
 #countryel{
     margin: 0px;
     padding: 0;
+}
+
+#locationName{
+    border-radius: 10px;
+    border: grey 2px solid;
+
+
+}
+
+#submit {
+    border-radius: 10px;
+    border: grey 2px solid;
+}
+
+#locName{
+    padding-right: 8px;
 }

@@ -5,6 +5,7 @@ function createForm() {
 let form = document.createElement('form');
     form.id = "locationForm";
     let label = document.createElement('label');
+    label.id = 'locName';
     label.for = 'locationName';
     label.textContent = 'Enter the name of a city here';
     let input = document.createElement('input');
@@ -12,6 +13,7 @@ let form = document.createElement('form');
     input.id = 'locationName';
     input.name = 'locationName';
     let submit = document.createElement('input');
+    submit.id = 'submit';
     submit.type = 'submit';
     submit.value = "Submit";
     
@@ -143,6 +145,8 @@ function createMainContent() {
     countryh1.id = 'countryh1';
     const curntWeath = document.createElement('h2');
     curntWeath.id = 'curntWeathh2';
+    const weathIcon = document.createElement('h2');
+    weathIcon.id = 'weathIcon';
     const curDay = document.createElement('h2');
     curDay.id = 'currDay';
     const locTimeh2 = document.createElement('h2');
@@ -152,6 +156,7 @@ function createMainContent() {
 
     main.appendChild(countryh1);
     main.appendChild(curntWeath);
+    main.appendChild(weathIcon);
     main.appendChild(curDay);
     main.appendChild(locTimeh2);
     main.appendChild(temp_ch3);
@@ -207,10 +212,28 @@ function checkAndDisplayWeatherBackground(weather){
     }
 }
 
+function convertDate(date){
+    const dateArr = date.split(' ');
+    console.log(dateArr[0]);
+    console.log(dateArr[1]);
+
+    let dMY = dateArr[0];
+    dMYArr = dMY.split('-');
+    const output = `${dateArr[1]} ${dMYArr[2]}-${dMYArr[1]}-${dMYArr[0]}`
+
+
+    return output;
+
+
+    
+
+}
+
 // displays the main content of the current day and weather on the page
 function displayMainContent(country, locName, currentWeath, locTime, temp_c, temp_f){
 
     let countryel = document.getElementById('countryh1');
+    let weathIconEl = document.getElementById('weathIcon');
     let locTimeel = document.getElementById('locTimeh2');
     let currentWeathel = document.getElementById('curntWeathh2');
     let currentDay = document.getElementById('currDay');
@@ -219,13 +242,13 @@ function displayMainContent(country, locName, currentWeath, locTime, temp_c, tem
     countryel.textContent = `${locName}, ${country}`;
     checkAndDisplayWeatherBackground(currentWeath);
     currentWeathel.textContent = currentWeath;
-    addWeatherIcon(currentWeath, currentWeathel);
-    locTimeel.textContent = locTime;
+    addWeatherIcon(currentWeath, weathIconEl);
+    locTimeel.textContent = convertDate(locTime);;
     let mainCDate = new Date(locTime);
     let convertedDay = convertNumToDay(mainCDate.getDay());
     console.log(convertedDay); 
     currentDay.textContent = convertedDay; 
-    temp_cel.textContent = `${temp_c} °C`;
+    temp_cel.textContent = `Temp: ${temp_c} °C`;
 
 }
     
