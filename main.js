@@ -38,18 +38,32 @@ function createCardDiv(){
 }
 
 //Creates the cards that display the weather cards below main content
-function createWeekCard(day, condition, temp){
+function createWeekCard(day, condition, temp_c, temp_f){
 
     let cardDiv = document.createElement('div');
     cardDiv.id = 'cardDiv';
     let dayOfWeek = document.createElement('h2');
     let daysCondition = document.createElement('h3');
-
     let daysTemp = document.createElement('h3');
+    let unitChange = document.getElementById('changeUnits');
 
     dayOfWeek.textContent = day;
     daysCondition.textContent = condition;
-    daysTemp.textContent = `${temp} °C`;
+
+    let celcius = true;
+    unitChange.addEventListener('click', () => {
+        if (celcius) {
+        daysTemp.textContent = `${temp_f} °F`;
+        celcius = false;
+        }
+        else{
+            daysTemp.textContent = `${temp_c} °C`;
+            celcius = true;
+
+        }
+
+    })
+    daysTemp.textContent = `${temp_c} °C`;
 
     document.getElementById('mainCardDiv').appendChild(cardDiv);
     cardDiv.appendChild(dayOfWeek);
@@ -63,28 +77,32 @@ function createWeekCard(day, condition, temp){
 function addWeatherIcon(weather, div) {
     if (weather.indexOf('cloudy') >= 0 || weather.indexOf('Overcast') >= 0 || weather.indexOf('Cloudy') >= 0) {
         let icon = document.createElement('img');
-        icon.src = './icons/2682849_cloud_cloudy_day_forecast_sun_icon (2).png'
+        icon.src = './icons/2682849_cloud_cloudy_day_forecast_sun_icon (2).png';
+        icon.id = 'icon';
         div.appendChild(icon);
 
 
     }
     else if (weather.indexOf('rain') >= 0) {
         let icon = document.createElement('img');
-        icon.src = './icons/2682844_cloud_day_precipitation_rain_snow_icon.png'
+        icon.src = './icons/2682844_cloud_day_precipitation_rain_snow_icon.png';
+        icon.id = 'icon';
         div.appendChild(icon);
         
 
     }
     else if (weather.indexOf('Sunny') >= 0 || weather.indexOf('Clear') >= 0) {
         let icon = document.createElement('img');
-        icon.src = './icons/2682848_day_forecast_sun_sunny_weather_icon.png'
+        icon.src = './icons/2682848_day_forecast_sun_sunny_weather_icon.png';
+        icon.id = 'icon';
         div.appendChild(icon);
 
     }
 
     else if (weather.indexOf('Misty') >= 0){
         let icon = document.createElement('img');
-        icon.src = './icons/2682821_fog_foggy_forecast_mist_weather_icon.png'
+        icon.src = './icons/2682821_fog_foggy_forecast_mist_weather_icon.png';
+        icon.id = 'icon';
         div.appendChild(icon);
         
     }
@@ -124,7 +142,7 @@ async function createWeeklyWeatherForecast(location){
         console.log(forecast.forecast);
         for (let i = 1; i <8; i++){
             let date = new Date(forecast.forecast.forecastday[i].date); 
-            createWeekCard(convertNumToDay(date.getDay()), forecast.forecast.forecastday[i].day.condition.text, forecast.forecast.forecastday[i].day.maxtemp_c)
+            createWeekCard(convertNumToDay(date.getDay()), forecast.forecast.forecastday[i].day.condition.text, forecast.forecast.forecastday[i].day.maxtemp_c,  forecast.forecast.forecastday[i].day.maxtemp_f)
         }
     }
     catch(err){
@@ -141,6 +159,9 @@ function removeCurrentForecast(){
 
 // Creates the weather information for the day and location currently selected
 function createMainContent() {
+    const changeUnits = document.createElement('button');
+    changeUnits.id = 'changeUnits';
+    changeUnits.textContent = "Change units";
     const countryh1 = document.createElement('h1');
     countryh1.id = 'countryh1';
     const curntWeath = document.createElement('h2');
@@ -154,6 +175,7 @@ function createMainContent() {
     const temp_ch3 = document.createElement('h2');
     temp_ch3.id = 'temp_ch3';
 
+    main.append(changeUnits);
     main.appendChild(countryh1);
     main.appendChild(curntWeath);
     main.appendChild(weathIcon);
@@ -217,9 +239,24 @@ function convertDate(date){
     console.log(dateArr[0]);
     console.log(dateArr[1]);
 
+    let splitTime = dateArr[1].split(':');
+    let firstHalf = splitTime[0];
+    let secondHalf = splitTime[1]
+    if (Number(firstHalf) >= 13){
+        firstHalf = firstHalf - 12;
+        secondHalf = `${secondHalf}pm`;
+    }
+    else if (Number(firstHalf >= 12)){
+        secondHalf = `${secondHalf}pm`;
+
+    }
+    else{
+        secondHalf = `${secondHalf}am`
+    }
+
     let dMY = dateArr[0];
     dMYArr = dMY.split('-');
-    const output = `${dateArr[1]} ${dMYArr[2]}-${dMYArr[1]}-${dMYArr[0]}`
+    const output = `${firstHalf}:${secondHalf} ${dMYArr[2]}-${dMYArr[1]}-${dMYArr[0]}`
 
 
     return output;
@@ -238,16 +275,37 @@ function displayMainContent(country, locName, currentWeath, locTime, temp_c, tem
     let currentWeathel = document.getElementById('curntWeathh2');
     let currentDay = document.getElementById('currDay');
     let temp_cel = document.getElementById('temp_ch3');
+    let icon = document.getElementById('icon');
+    let unitChange = document.getElementById('changeUnits');
 
     countryel.textContent = `${locName}, ${country}`;
     checkAndDisplayWeatherBackground(currentWeath);
     currentWeathel.textContent = currentWeath;
+    if (icon){
+        icon.remove();
+        addWeatherIcon(currentWeath, weathIconEl);
+    }
+    else {
     addWeatherIcon(currentWeath, weathIconEl);
+    }
     locTimeel.textContent = convertDate(locTime);;
     let mainCDate = new Date(locTime);
     let convertedDay = convertNumToDay(mainCDate.getDay());
     console.log(convertedDay); 
-    currentDay.textContent = convertedDay; 
+    currentDay.textContent = convertedDay;
+    let celcius = true;
+    unitChange.addEventListener('click', () => {
+        if (celcius) {
+        temp_cel.textContent = `Temp: ${temp_f} °F`;
+        celcius = false;
+        }
+        else{
+            temp_cel.textContent = `Temp: ${temp_c} °C`;
+            celcius = true
+
+        }
+
+    })
     temp_cel.textContent = `Temp: ${temp_c} °C`;
 
 }
